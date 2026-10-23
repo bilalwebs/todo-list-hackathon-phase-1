@@ -6,10 +6,10 @@ This module provides a CLI for managing tasks via command-line arguments.
 
 import argparse
 import sys
-from typing import Optional
 
 from todo_app.exceptions import InvalidTaskDataError, TaskNotFoundException
 from todo_app.manager import TodoManager
+from todo_app.models import Task
 
 
 class TodoCLI:
@@ -90,7 +90,7 @@ class TodoCLI:
 
         return parser
 
-    def print_task(self, task) -> None:
+    def print_task(self, task: Task) -> None:
         """
         Print a single task in formatted style.
 
@@ -150,7 +150,10 @@ class TodoCLI:
         if args.status == "all":
             completed = len([t for t in tasks if t.completed])
             pending = total - completed
-            print(f"\n📊 Total: {total} tasks ({completed} completed, {pending} pending)")
+            print(
+                f"\n📊 Total: {total} tasks "
+                f"({completed} completed, {pending} pending)"
+            )
         else:
             print(f"\n📊 Total: {total} {args.status} tasks")
 
@@ -257,7 +260,7 @@ class TodoCLI:
             print(f"❌ Error: {e}", file=sys.stderr)
             sys.exit(1)
 
-    def run(self, argv: Optional[list[str]] = None) -> None:
+    def run(self, argv: list[str] | None = None) -> None:
         """
         Run the CLI application.
 

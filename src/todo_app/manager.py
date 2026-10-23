@@ -4,8 +4,6 @@ TodoManager class for managing todo tasks.
 This module provides the core CRUD operations for managing tasks in-memory.
 """
 
-from typing import Optional
-
 from todo_app.exceptions import InvalidTaskDataError, TaskNotFoundException
 from todo_app.models import Task
 
@@ -95,8 +93,9 @@ class TodoManager:
         """
         valid_statuses = ["all", "pending", "completed"]
         if status not in valid_statuses:
+            valid_options = ", ".join(valid_statuses)
             raise ValueError(
-                f"Invalid status '{status}'. Must be one of: {', '.join(valid_statuses)}"
+                f"Invalid status '{status}'. Must be one of: {valid_options}"
             )
 
         if status == "all":
@@ -156,8 +155,8 @@ class TodoManager:
     def update_task(
         self,
         task_id: int,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
+        title: str | None = None,
+        description: str | None = None,
     ) -> Task:
         """
         Update an existing task's title and/or description.
@@ -203,7 +202,8 @@ class TodoManager:
             # Validate description length
             if len(description) > 1000:
                 raise InvalidTaskDataError(
-                    f"Description must be at most 1000 characters (got {len(description)})"
+                    "Description must be at most 1000 characters "
+                    f"(got {len(description)})"
                 )
             task.description = description
 

@@ -5,10 +5,10 @@ This module provides an interactive command-line interface for managing tasks.
 """
 
 import sys
-from typing import Optional
 
 from todo_app.exceptions import InvalidTaskDataError, TaskNotFoundException
 from todo_app.manager import TodoManager
+from todo_app.models import Task
 
 
 class TodoUI:
@@ -40,7 +40,7 @@ class TodoUI:
         print(f"  {title}")
         print("=" * 60)
 
-    def print_task(self, task) -> None:
+    def print_task(self, task: Task) -> None:
         """
         Print a single task in formatted style.
 
@@ -68,7 +68,7 @@ class TodoUI:
         print("  9. Exit")
         print("\n" + "-" * 60)
 
-    def get_input(self, prompt: str, required: bool = True) -> Optional[str]:
+    def get_input(self, prompt: str, required: bool = True) -> str | None:
         """
         Get user input with optional validation.
 
@@ -135,7 +135,10 @@ class TodoUI:
             if status == "all":
                 completed = len([t for t in tasks if t.completed])
                 pending = total - completed
-                print(f"\n📊 Total: {total} tasks ({completed} completed, {pending} pending)")
+                print(
+                    f"\n📊 Total: {total} tasks "
+                    f"({completed} completed, {pending} pending)"
+                )
             else:
                 print(f"\n📊 Total: {total} {status} tasks")
 
@@ -209,7 +212,9 @@ class TodoUI:
             print(f"  [{task.id}] {task.title}")
 
         try:
-            task_id_str = self.get_input("\nEnter task ID to mark complete: ", required=True)
+            task_id_str = self.get_input(
+                "\nEnter task ID to mark complete: ", required=True
+            )
             assert task_id_str is not None
             task_id = int(task_id_str)
 

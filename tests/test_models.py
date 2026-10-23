@@ -209,6 +209,15 @@ class TestTaskStringRepresentation:
         complete_repr = repr(task)
         assert "completed=True" in complete_repr
 
+    def test_task_str_includes_id_status_and_title(self):
+        """Test the user-friendly __str__ representation."""
+        task = Task(id=7, title="Buy milk")
+
+        assert str(task) == "[7] ☐ Buy milk"
+
+        task.completed = True
+        assert str(task) == "[7] ✓ Buy milk"
+
 
 class TestTaskTimestamp:
     """Test suite for Task creation timestamp."""

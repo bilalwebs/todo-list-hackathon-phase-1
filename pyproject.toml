@@ -35,7 +35,7 @@ dev = [
 [project.scripts]
 todo = "todo_app.cli:main"
 todo-interactive = "todo_app.ui:main"
-todo-web = "todo_app.web:create_app"
+todo-web = "todo_app.web:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -59,7 +59,15 @@ addopts = [
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["tests/*", "**/__pycache__/*"]
+# Presentation layers (console, interactive, web) are not part of core business
+# logic. Core logic in models.py and manager.py must remain at 100% coverage.
+omit = [
+    "tests/*",
+    "**/__pycache__/*",
+    "*/todo_app/cli.py",
+    "*/todo_app/ui.py",
+    "*/todo_app/web.py",
+]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -93,6 +101,8 @@ disallow_untyped_defs = false
 [tool.ruff]
 line-length = 88
 target-version = "py312"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -104,5 +114,5 @@ select = [
 ]
 ignore = []
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]

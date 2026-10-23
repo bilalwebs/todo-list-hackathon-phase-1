@@ -11,8 +11,8 @@ __version__ = "1.0.0"
 __author__ = "Your Name"
 
 from todo_app.exceptions import InvalidTaskDataError, TaskNotFoundException
-from todo_app.models import Task
 from todo_app.manager import TodoManager
+from todo_app.models import Task
 
 __all__ = [
     "Task",
