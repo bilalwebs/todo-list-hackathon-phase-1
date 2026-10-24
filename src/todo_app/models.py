@@ -53,6 +53,10 @@ class Task:
         Raises:
             InvalidTaskDataError: If validation fails
         """
+        # Validate task ID
+        if isinstance(self.id, bool) or not isinstance(self.id, int) or self.id <= 0:
+            raise ValueError(f"Task ID must be a positive integer (got {self.id!r})")
+
         # Validate and trim title
         if self.title is None:
             raise InvalidTaskDataError("Title cannot be None")
@@ -70,11 +74,15 @@ class Task:
                 f"Title must be between 1 and 200 characters (got {len(self.title)})"
             )
 
-        # Validate description length (if provided)
-        if self.description and len(self.description) > 1000:
+        # Normalize and validate description
+        desc: str | None = self.description
+        if desc is None:
+            self.description = ""
+            desc = self.description
+        if len(desc) > 1000:
             raise InvalidTaskDataError(
                 "Description must be at most 1000 characters "
-                f"(got {len(self.description)})"
+                f"(got {len(desc)})"
             )
 
     def __repr__(self) -> str:

@@ -360,6 +360,22 @@ class TestUpdateTask:
 
         assert manager.get_task(task.id).description == "Short"
 
+    def test_update_task_valid_title_with_invalid_description_is_atomic(self):
+        """Test that a failed update does not change any task fields."""
+        manager = TodoManager()
+        task = manager.add_task(title="Original", description="Short")
+
+        with pytest.raises(InvalidTaskDataError):
+            manager.update_task(
+                task_id=task.id,
+                title="New title",
+                description="x" * 1001,
+            )
+
+        unchanged = manager.get_task(task.id)
+        assert unchanged.title == "Original"
+        assert unchanged.description == "Short"
+
     def test_update_task_with_same_values(self):
         """Test updating with same values succeeds."""
         manager = TodoManager()

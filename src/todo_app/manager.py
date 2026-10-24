@@ -4,7 +4,7 @@ TodoManager class for managing todo tasks.
 This module provides the core CRUD operations for managing tasks in-memory.
 """
 
-from todo_app.exceptions import InvalidTaskDataError, TaskNotFoundException
+from todo_app.exceptions import TaskNotFoundException
 from todo_app.models import Task
 
 
@@ -185,27 +185,17 @@ class TodoManager:
 
         task = self.tasks[task_id]
 
-        # Update title if provided
-        if title is not None:
-            # Create a temporary task to validate the new title
-            # This leverages Task.__post_init__ validation
-            temp_task = Task(
-                id=task.id,
-                title=title,
-                description=task.description,
-                completed=task.completed,
-            )
-            task.title = temp_task.title  # Use the validated and trimmed title
+        new_title = task.title if title is None else title
+        new_description = task.description if description is None else description
+        validated_task = Task(
+            id=task.id,
+            title=new_title,
+            description=new_description,
+            completed=task.completed,
+        )
 
-        # Update description if provided
-        if description is not None:
-            # Validate description length
-            if len(description) > 1000:
-                raise InvalidTaskDataError(
-                    "Description must be at most 1000 characters "
-                    f"(got {len(description)})"
-                )
-            task.description = description
+        task.title = validated_task.title
+        task.description = validated_task.description
 
         return task
 

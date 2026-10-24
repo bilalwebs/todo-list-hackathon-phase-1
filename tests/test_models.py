@@ -103,6 +103,27 @@ class TestTaskValidation:
         with pytest.raises(InvalidTaskDataError):
             Task(id=1, title=None)  # type: ignore
 
+    def test_task_with_zero_id_raises_value_error(self):
+        """Test that a zero task ID is rejected."""
+        with pytest.raises(ValueError, match="positive integer"):
+            Task(id=0, title="Valid")
+
+    def test_task_with_negative_id_raises_value_error(self):
+        """Test that a negative task ID is rejected."""
+        with pytest.raises(ValueError, match="positive integer"):
+            Task(id=-1, title="Valid")
+
+    def test_task_with_non_integer_id_raises_value_error(self):
+        """Test that a non-integer task ID is rejected."""
+        with pytest.raises(ValueError, match="positive integer"):
+            Task(id="1", title="Valid")  # type: ignore[arg-type]
+
+    def test_task_with_none_description_is_normalized_to_empty_string(self):
+        """Test that a None description becomes an empty string."""
+        task = Task(id=1, title="Valid", description=None)  # type: ignore[arg-type]
+
+        assert task.description == ""
+
 
 class TestTaskCompletionStatus:
     """Test suite for Task completion status management."""
