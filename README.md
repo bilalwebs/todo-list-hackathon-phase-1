@@ -142,32 +142,51 @@ python -m todo_app.ui
 python src/todo_app/ui.py
 ```
 
-#### Web UI (Beautiful modern interface)
+#### Web UI (Flask + Bootstrap 5)
+
+The web interface is a thin presentation layer built on top of the same
+`TodoManager` and `Task` classes used by the CLI. No business logic is
+duplicated: validation, filtering, and CRUD operations all go through the
+existing manager.
 
 ```bash
-# First install dependencies:
-pip install -e .
+# Install the project and its dependencies (Flask is included)
+uv pip install -e ".[dev]"
 
-# Then run the web server:
+# Method 1: Run as a Python module
 python -m todo_app.web
 
-# Or if installed as package:
+# Method 2: Run the installed entry point
 todo-web
+```
+
+Access the web UI at **http://127.0.0.1:5000** after starting the server.
+
+Optional environment variables:
+
+```bash
+# Change the bind address and port
+HOST=0.0.0.0 PORT=8000 python -m todo_app.web
+
+# Enable Flask debug mode (development only)
+FLASK_DEBUG=1 python -m todo_app.web
+
+# Set a production secret key for flash messages
+SECRET_KEY="replace-with-a-random-value" python -m todo_app.web
 ```
 
 ### Web UI Features
 
-The application now includes a beautiful, modern web interface with:
-
 - 🎨 **Modern UI Design** - Clean, responsive interface using Bootstrap 5
 - 📱 **Fully Responsive** - Works on mobile, tablet, and desktop
-- 🔄 **Real-time Updates** - See changes instantly without page refresh
-- 📊 **Task Statistics** - Visual counters for total, pending, and completed tasks
+- 📊 **Task Statistics** - Cards for total, pending, and completed tasks
 - 🔍 **Filtering** - View all, pending, or completed tasks
-- ✨ **Animations** - Smooth transitions and visual feedback
-- 🎯 **Intuitive Controls** - Easy to add, edit, complete, and delete tasks
+- ✏️ **Full CRUD** - Add, edit, delete, mark complete, and mark incomplete
+- 💬 **Flash Messages** - Clear success and error feedback for every action
+- 🛡️ **Shared Validation** - Invalid input is rejected by the existing `Task` model
 
-Access the web UI at `http://localhost:5000` after starting the server.
+> **Note:** Phase I uses in-memory storage, so tasks are reset when the server
+> restarts. Persistence arrives in Phase II.
 
 ## 📖 Usage Guide
 
@@ -283,11 +302,19 @@ todo-list/
 │       ├── exceptions.py      # Custom exceptions
 │       ├── models.py          # Task model
 │       ├── manager.py         # TodoManager (CRUD operations)
-│       └── ui.py              # Console UI
+│       ├── cli.py             # Command-line interface
+│       ├── ui.py              # Interactive console UI
+│       ├── web.py             # Flask web application (app factory + routes)
+│       └── templates/         # Jinja2 templates (Bootstrap 5)
+│           ├── base.html      # Shared layout, navbar, flash messages
+│           ├── index.html     # Task dashboard, stats, and filters
+│           ├── add.html       # Add-task form
+│           └── edit.html      # Edit-task form
 ├── tests/                     # 🧪 Unit Tests
 │   ├── __init__.py
 │   ├── test_models.py         # Task model tests (100% coverage)
-│   └── test_manager.py        # TodoManager tests (100% coverage)
+│   ├── test_manager.py        # TodoManager tests (100% coverage)
+│   └── test_web.py            # Flask routes and error handling tests
 ├── history/
 │   └── prompts/               # Prompt History Records
 ├── pyproject.toml             # Python project configuration (UV)
@@ -328,6 +355,12 @@ class Task:
    - Interactive menu-driven interface
    - User-friendly error messages
    - Clear visual feedback
+
+4. **Web UI** (`web.py` + `templates/`)
+   - Flask application factory (`create_app`)
+   - Server-rendered Bootstrap 5 interface
+   - Reuses `TodoManager` for every operation
+   - Handles `InvalidTaskDataError` and `TaskNotFoundException`
 
 ### Design Decisions
 

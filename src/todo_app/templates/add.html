@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Add Task &middot; LifeStepsAI Todo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Tasks</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add Task</li>
+            </ol>
+        </nav>
+
+        <div class="card form-card">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h3 fw-bold page-title mb-1">Add a New Task</h1>
+                <p class="text-muted mb-4">
+                    Give your task a clear title. You can add more detail with a description.
+                </p>
+
+                <form method="post" action="{{ url_for('add_task') }}" novalidate>
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">Title</label>
+                        <input
+                            type="text"
+                            class="form-control form-control-lg"
+                            id="title"
+                            name="title"
+                            value="{{ form_title }}"
+                            placeholder="e.g. Prepare project presentation"
+                            maxlength="200"
+                            required
+                            autofocus
+                        >
+                        <div class="form-text">Required &middot; maximum 200 characters.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea
+                            class="form-control"
+                            id="description"
+                            name="description"
+                            rows="5"
+                            maxlength="1000"
+                            placeholder="Optional notes, steps, or context..."
+                        >{{ form_description }}</textarea>
+                        <div class="form-text">Optional &middot; maximum 1000 characters.</div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-lg me-1"></i>Create Task
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

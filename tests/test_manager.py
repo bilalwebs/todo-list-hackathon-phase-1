@@ -138,7 +138,7 @@ class TestListTasks:
     def test_list_pending_tasks_only(self):
         """Test listing only pending (incomplete) tasks."""
         manager = TodoManager()
-        task1 = manager.add_task(title="Pending")
+        manager.add_task(title="Pending")
         task2 = manager.add_task(title="Completed")
         manager.mark_complete(task_id=task2.id)
 
@@ -174,7 +174,7 @@ class TestListTasks:
         """Test that default (no status parameter) shows all tasks."""
         manager = TodoManager()
         task1 = manager.add_task(title="Task 1")
-        task2 = manager.add_task(title="Task 2")
+        manager.add_task(title="Task 2")
         manager.mark_complete(task_id=task1.id)
 
         default = manager.list_tasks()
@@ -193,9 +193,9 @@ class TestListTasks:
     def test_list_tasks_preserves_order(self):
         """Test that tasks are returned in creation order."""
         manager = TodoManager()
-        task1 = manager.add_task(title="First")
-        task2 = manager.add_task(title="Second")
-        task3 = manager.add_task(title="Third")
+        manager.add_task(title="First")
+        manager.add_task(title="Second")
+        manager.add_task(title="Third")
 
         tasks = manager.list_tasks()
 
@@ -227,9 +227,9 @@ class TestGetTask:
     def test_get_task_returns_correct_task(self):
         """Test that get_task returns the correct task among multiple."""
         manager = TodoManager()
-        task1 = manager.add_task(title="Task 1")
+        manager.add_task(title="Task 1")
         task2 = manager.add_task(title="Task 2")
-        task3 = manager.add_task(title="Task 3")
+        manager.add_task(title="Task 3")
 
         retrieved = manager.get_task(task_id=task2.id)
 
@@ -286,7 +286,7 @@ class TestDeleteTask:
         """Test that deleted task IDs are not reused."""
         manager = TodoManager()
         task1 = manager.add_task(title="Task 1")
-        task2 = manager.add_task(title="Task 2")
+        manager.add_task(title="Task 2")
 
         manager.delete_task(task_id=task1.id)
 
@@ -349,6 +349,32 @@ class TestUpdateTask:
 
         with pytest.raises(InvalidTaskDataError):
             manager.update_task(task_id=task.id, title="")
+
+    def test_update_task_with_description_too_long_raises_error(self):
+        """Test that updating with an oversized description raises error."""
+        manager = TodoManager()
+        task = manager.add_task(title="Original", description="Short")
+
+        with pytest.raises(InvalidTaskDataError):
+            manager.update_task(task_id=task.id, description="x" * 1001)
+
+        assert manager.get_task(task.id).description == "Short"
+
+    def test_update_task_valid_title_with_invalid_description_is_atomic(self):
+        """Test that a failed update does not change any task fields."""
+        manager = TodoManager()
+        task = manager.add_task(title="Original", description="Short")
+
+        with pytest.raises(InvalidTaskDataError):
+            manager.update_task(
+                task_id=task.id,
+                title="New title",
+                description="x" * 1001,
+            )
+
+        unchanged = manager.get_task(task.id)
+        assert unchanged.title == "Original"
+        assert unchanged.description == "Short"
 
     def test_update_task_with_same_values(self):
         """Test updating with same values succeeds."""

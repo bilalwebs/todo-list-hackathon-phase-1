@@ -4,9 +4,11 @@ Demo script showing LifeStepsAI Todo Application functionality.
 """
 
 import sys
+
 sys.path.insert(0, '/mnt/d/hackathon-robotic/todo-list/src')
 
 from todo_app import TodoManager
+
 
 def print_separator():
     print("\n" + "=" * 70)
@@ -29,7 +31,9 @@ def demo():
     task1 = manager.add_task(title="Buy groceries", description="Milk, eggs, bread")
     print(f"✅ Added: {task1}")
 
-    task2 = manager.add_task(title="Team meeting", description="Discuss Q1 roadmap at 2 PM")
+    task2 = manager.add_task(
+        title="Team meeting", description="Discuss Q1 roadmap at 2 PM"
+    )
     print(f"✅ Added: {task2}")
 
     task3 = manager.add_task(title="Write documentation")
@@ -97,7 +101,7 @@ def demo():
 
     print(f"\nDeleting task {task2.id}: '{task2.title}'")
     manager.delete_task(task_id=task2.id)
-    print(f"✅ Task deleted successfully")
+    print("✅ Task deleted successfully")
 
     remaining = manager.list_tasks()
     print(f"\nRemaining tasks: {len(remaining)}")
